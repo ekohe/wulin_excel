@@ -1,5 +1,15 @@
 module WulinMaster
   module Actions
+    alias_method :index_without_excel, :index
+    
+    def index
+      index_without_excel
+      puts "----------------------------- EXCEL -----------------------------"
+      if params[:format].to_s == 'xls' and Mime::Type.lookup_by_extension("xls")
+        render_xls
+      end
+    end  
+    
     def render_xls
       @excel_columns = []
       params[:columns].each do |column|
