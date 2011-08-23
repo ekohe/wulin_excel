@@ -3,11 +3,11 @@ module WulinMaster
     alias_method :index_without_excel, :index
     
     def index
-      index_without_excel
-      puts "----------------------------- EXCEL -----------------------------"
       if params[:format].to_s == 'xls' and Mime::Type.lookup_by_extension("xls")
         render_xls
+        return
       end
+      index_without_excel      
     end  
     
     def render_xls
