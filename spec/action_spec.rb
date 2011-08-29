@@ -1,7 +1,6 @@
 require 'spec_helper'
-require 'wulin_excel/action'
 
-class CountriesController < WulinMaster::ScreenController
+class CountriesController < ApplicationController
   attr_accessor :query
 end
 
@@ -11,7 +10,11 @@ end
 describe CountriesController, :type => :controller do
   describe "Includes WulinMaster::Actions" do
     before :each do
-      
+      CountriesController.send(:include, WulinMaster::Actions)
+    end
+    
+    it "should description" do
+      get :index, :format => 'xls'
     end
   end
 end
