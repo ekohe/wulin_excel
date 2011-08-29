@@ -49,4 +49,6 @@ Spork.each_run do
       end
     end
   end
+  
+  Mime::Type.register "application/vnd.ms-excel", :xls
 end
