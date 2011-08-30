@@ -5,19 +5,10 @@ Spork.prefork do
   ENV["RAILS_ENV"] ||= 'test'
   require 'rails/all'
   require 'rspec/rails'
+  require 'writeexcel'
   
   RSpec.configure do |config|
     config.mock_with :rspec
-  end
-  
-  # define url helper for testing
-  require 'ostruct'
-  module ActionController::UrlFor
-    def _routes
-      helpers = OpenStruct.new
-      helpers.url_helpers = Module.new
-      helpers
-    end
   end
   
   # create a dummy rails app

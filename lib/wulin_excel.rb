@@ -18,7 +18,8 @@ module WulinExcel
 
       # Register xls mime type
       Mime::Type.register "application/vnd.ms-excel", :xls
-    
+      
+      require 'writeexcel'
       require 'wulin_excel/action'
     end
   end

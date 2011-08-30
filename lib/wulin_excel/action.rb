@@ -10,13 +10,7 @@ module WulinMaster
       index_without_excel      
     end  
     
-    def render_xls
-      @excel_columns = []
-      params[:columns].each do |column|
-        @excel_columns << grid.columns.find{|col| col.name.to_s == column["name"].to_s }
-      end
-      @excel_columns.compact! # In case there's a column passed in the params[:column] that doesn't exist
-      
+    def render_xls      
       # Create initial query object
       @query = grid.model
 
@@ -39,38 +33,63 @@ module WulinMaster
       # Get all the objects
       @objects = @query.all
       
+      # start to build xls file
       filename = File.join(Rails.root, 'tmp', "export-#{ Time.now.strftime("%Y-%m-%d-at-%H-%M-%S") }.xls")
       workbook = WriteExcel.new(filename)
       worksheet  = workbook.add_worksheet
+      
+      # build the header row for worksheet
+      build_worksheet_header(workbook, worksheet, params[:columns])
+      
+      # construct excel columns
+      excel_columns = construct_excel_columns(params[:columns])
+      
+      # build the content rows for worksheet
+      build_worksheet_content(worksheet, @objects, excel_columns)
+      
+      # close the workbook and render file
+      workbook.close
+      send_data File.read(filename)
+    end
 
-      header_format = workbook.add_format
+  protected
+  
+    def construct_excel_columns(columns)
+      excel_columns = []
+      columns.each do |column|
+        excel_columns << grid.columns.find{|col| col.name.to_s == column["name"].to_s }
+      end
+      excel_columns.compact # In case there's a column passed in the params[:column] that doesn't exist
+    end
+    
+    def build_worksheet_header(book, sheet, columns)
+      header_format = book.add_format
       header_format.set_bold
       header_format.set_align('top')
-      worksheet.set_row(0, 16, header_format)
+      sheet.set_row(0, 16, header_format)
 
-      params[:columns].each_with_index do |column, index|
+      columns.each_with_index do |column, index|
         column_from_grid = grid.columns.find{|col| col.name.to_s == column["name"].to_s}
         label_text = column_from_grid.nil? ? column["name"] : column_from_grid.label
 
-        worksheet.write_string(0, index, label_text)
-        worksheet.set_column(index, index,  column["width"].to_i/6)
+        sheet.write_string(0, index, label_text)
+        sheet.set_column(index, index,  column["width"].to_i/6)
       end
-
+    end
+    
+    def build_worksheet_content(sheet, objects, columns)
       i = 1
-      
-      @objects.each do |object|
+      objects.each do |object|
         j = 0
-        worksheet.set_row(i, 16)
-        @excel_columns.each do |column|
+        sheet.set_row(i, 16)
+        columns.each do |column|
           value = column.format(object.read_attribute(column.name.to_s)).to_s
           value.gsub!("\r", "") # Multiline fix
-          worksheet.write_string(i, j, value)
+          sheet.write_string(i, j, value)
           j += 1
         end
         i += 1
       end
-      workbook.close
-      send_data File.read(filename)
     end
   end
 end
