@@ -12,23 +12,23 @@ $(document).ready(function() {
 
 (function($) {
   function Excel(gridName) {
-    var $gridConfig;
+    var $grid;
     var $paramsUrl;
 
     function init() {
-      $gridConfig = gridManager.getGrid(gridName);
+      $grid = gridManager.getGrid(gridName);
       $paramsUrl = '';
     }
     
     function sendExcelRequest() {
-      if (($gridConfig==null) || ($gridConfig.grid==null) || ($gridConfig.loader==null)) 
+      if (($grid==null) || ($grid.store.loader==null)) 
         return false;
       
       // Get columns order and size
       addColumnSizeAndOrder();
       
       // Add sorting, filters and params from the loader
-      $paramsUrl += $gridConfig.loader.conditionalURI();
+      $paramsUrl += $grid.store.loader.conditionalURI();
 
       // Request download
       requestExcel();
@@ -37,7 +37,7 @@ $(document).ready(function() {
     }
     
     function addColumnSizeAndOrder() {
-      $.each($gridConfig.grid.getColumns(), function(index, value) {
+      $.each($grid.getColumns(), function(index, value) {
         $paramsUrl += "&columns[][name]="+value.id+"&columns[][width]="+value.width;
       });
     }
@@ -48,7 +48,7 @@ $(document).ready(function() {
   			var pair = this.split('=');
   			inputs+='<input type="hidden" name="'+ pair[0] +'" value="'+ pair[1] +'" />'; 
   		});
-      $('<form action="'+ $gridConfig.path +'.xls" method="GET">'+inputs+'</form>').appendTo('body').submit().remove();
+      $('<form action="'+ $grid.path +'.xls" method="GET">'+inputs+'</form>').appendTo('body').submit().remove();
     }
     
     init();
