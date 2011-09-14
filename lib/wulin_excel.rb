@@ -9,7 +9,7 @@ module WulinExcel
       end
     end
   
-    config.after_initialize do 
+    config.before_initialize do 
       # Add default export excel button to every grid
       WulinMaster::Grid.add_to_default_toolbar "Excel", :class => 'excel_export', :icon => 'excel'
 
