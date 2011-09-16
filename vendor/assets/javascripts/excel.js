@@ -21,14 +21,14 @@ $(document).ready(function() {
     }
     
     function sendExcelRequest() {
-      if (($grid==null) || ($grid.store.loader==null)) 
+      if (($grid==null) || ($grid.loader==null)) 
         return false;
       
       // Get columns order and size
       addColumnSizeAndOrder();
       
       // Add sorting, filters and params from the loader
-      $paramsUrl += $grid.store.loader.conditionalURI();
+      $paramsUrl += $grid.loader.conditionalURI();
 
       // Request download
       requestExcel();
