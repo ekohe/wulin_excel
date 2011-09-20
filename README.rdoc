@@ -10,11 +10,11 @@ a grid in WulinMaster.
 
 1. Put 'gem wulin_excel' to your Gemfile:
 
-   gem wulin_excel
+    gem wulin_excel
 
 2. Run bundler command to install the gem:
 
-   bundle install --path bundler
+    bundle install --path bundler
 
 3. Restart you app, and you can find excel export button on toolbar list.Have enjoy!
 
