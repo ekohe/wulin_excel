@@ -1,4 +1,4 @@
-== What dose WulinExcel do?
+= WulinExcel
 
 WulinExcel is a extension of WulinMaster,after use WulinExcel you can export excel file for 
 a grid in WulinMaster.
