@@ -38,11 +38,13 @@ module WulinMaster
       workbook = WriteExcel.new(filename)
       worksheet  = workbook.add_worksheet
       
+      columns = params[:columns].split(',').map{|x| x.split('-')}.map{|x| {'name' => x[0], 'width' => x[1]}}
+      
       # build the header row for worksheet
-      build_worksheet_header(workbook, worksheet, params[:columns])
+      build_worksheet_header(workbook, worksheet, columns)
       
       # construct excel columns
-      excel_columns = construct_excel_columns(params[:columns])
+      excel_columns = construct_excel_columns(columns)
       
       # build the content rows for worksheet
       build_worksheet_content(worksheet, @objects, excel_columns)
@@ -71,7 +73,6 @@ module WulinMaster
       columns.each_with_index do |column, index|
         column_from_grid = grid.columns.find{|col| col.name.to_s == column["name"].to_s}
         label_text = column_from_grid.nil? ? column["name"] : column_from_grid.label
-
         sheet.write_string(0, index, label_text)
         sheet.set_column(index, index,  column["width"].to_i/6)
       end

@@ -9,7 +9,7 @@ if !defined?(WulinMaster)
 end
 
 # Add default export excel button to every grid
-WulinMaster::Grid.add_to_default_toolbar "Excel", :class => 'excel_export', :icon => 'excel'
+WulinMaster::Toolbar.add_to_default_toolbar "Excel", :class => 'excel_export', :icon => 'excel'
 
 # Load excel javascript
 WulinMaster::add_javascript 'excel.js'
