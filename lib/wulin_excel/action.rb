@@ -84,7 +84,7 @@ module WulinMaster
         j = 0
         sheet.set_row(i, 16)
         columns.each do |column|
-          value = column.format(object.read_attribute(column.name.to_s)).to_s
+          value = column.format(object.send(column.name.to_s)).to_s
           value.gsub!("\r", "") # Multiline fix
           sheet.write_string(i, j, value)
           j += 1

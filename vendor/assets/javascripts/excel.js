@@ -46,7 +46,7 @@ $(document).ready(function() {
       var inputs = '<input type="hidden" name="columns" value="'+ $paramsUrl +'" />';
       
       // Add sorting, filters and params from the loader
-      jQuery.each($grid.loader.conditionalURI().split('&'), function(){ 
+      jQuery.each(($grid.query.replace('?', '') + "&" + $grid.loader.conditionalURI()).split('&'), function(){ 
        var pair = this.split('=');
        inputs += '<input type="hidden" name="'+ pair[0] +'" value="'+ pair[1] +'" />'; 
       });
