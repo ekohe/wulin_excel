@@ -38,7 +38,7 @@ module WulinMaster
       workbook = WriteExcel.new(filename)
       worksheet  = workbook.add_worksheet
       
-      columns = params[:columns].split(',').map{|x| x.split('-')}.map{|x| {'name' => x[0], 'width' => x[1]}}
+      columns = params[:columns].split(',').map{|x| x.split('~')}.map{|x| {'name' => x[0], 'width' => x[1]}}
       
       # build the header row for worksheet
       build_worksheet_header(workbook, worksheet, columns)
@@ -51,7 +51,7 @@ module WulinMaster
       
       # close the workbook and render file
       workbook.close
-      send_data File.read(filename)
+      send_data File.read(filename), :filename => "#{grid.name}-#{Time.now.to_s(:db)}.xls"
     end
 
   protected
@@ -72,7 +72,7 @@ module WulinMaster
 
       columns.each_with_index do |column, index|
         column_from_grid = grid.columns.find{|col| col.name.to_s == column["name"].to_s}
-        label_text = column_from_grid.nil? ? column["name"] : column_from_grid.label
+        label_text = column_from_grid ? column_from_grid.label : column["name"]
         sheet.write_string(0, index, label_text)
         sheet.set_column(index, index,  column["width"].to_i/6)
       end
@@ -84,7 +84,8 @@ module WulinMaster
         j = 0
         sheet.set_row(i, 16)
         columns.each do |column|
-          value = column.format(object.send(column.name.to_s)).to_s
+          value = column.json(object)
+          value = value.kind_of?(Hash) ? value[column.option_text_attribute].to_s : value.to_s
           value.gsub!("\r", "") # Multiline fix
           sheet.write_string(i, j, value)
           j += 1
