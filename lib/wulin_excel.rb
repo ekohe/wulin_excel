@@ -11,8 +11,9 @@ end
 # Add default export excel button to every grid
 WulinMaster::Toolbar.add_to_default_toolbar "Excel", :class => 'excel_export', :icon => 'excel'
 
-# Load excel javascript
+# Load excel javascript and stylesheet
 WulinMaster::add_javascript 'excel.js'
+WulinMaster::add_stylesheet 'excel.css'
 
 # Register xls mime type
 Mime::Type.register "application/vnd.ms-excel", :xls
