@@ -25,9 +25,6 @@ module WulinMaster
       # Add order
       parse_ordering
       
-      # Add select
-      add_select
-      
       fire_callbacks :query_ready
 
       # Get all the objects
