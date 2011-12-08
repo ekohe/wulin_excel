@@ -25,6 +25,12 @@ module WulinMaster
       # Add order
       parse_ordering
       
+      # Add includes (OUTER JOIN)
+      add_includes
+      
+      # Add joins (INNER JOIN)
+      add_joins
+      
       fire_callbacks :query_ready
 
       # Get all the objects
