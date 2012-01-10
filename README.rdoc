@@ -1,20 +1,20 @@
 = WulinExcel
 
-WulinExcel is a extension of WulinMaster,after use WulinExcel you can export excel file for 
-a grid in WulinMaster.
+WulinExcel is a extension of <b><em>WulinMaster</em></b>,{WulinMaster}[https://github.com/wulin/wulin_master] 
+is a grid gem base on {SlickGrid}[https://github.com/mleibman/SlickGrid].
+It provide powerfull generator and other tools to make grids easy to build.
+after use WulinExcel you can export excel file for a grid in WulinMaster.
        
 
 == How to Use
 
-=== User WulinExcel in Rails 3.1
-
-1. Put 'gem wulin_excel' to your Gemfile:
+1. Put '<code>gem wulin_excel</code>' to your Gemfile:
 
     gem wulin_excel
 
 2. Run bundler command to install the gem:
 
-    bundle install --path bundler
+    bundle install
 
 3. Restart you app, and you can find excel export button on toolbar list.Have enjoy!
 
