@@ -13,6 +13,11 @@ module WulinMaster
     def render_xls      
       # Create initial query object
       @query = grid.model
+      
+      # Make sure the relation method is called to correctly initialize it
+      # We had issues where it's not initialized through the relation method when using
+      #  the where method
+      grid.model.relation if grid.model.respond_to?(:relation)
 
       # Add the necessary where statements to the query
       construct_filters
@@ -30,11 +35,11 @@ module WulinMaster
       
       # Add joins (INNER JOIN)
       add_joins
-      
-      fire_callbacks :query_ready
 
       # Get all the objects
       @objects = @query.all
+      
+      fire_callbacks :query_ready
       
       # start to build xls file
       filename = File.join(Rails.root, 'tmp', "export-#{ Time.now.strftime("%Y-%m-%d-at-%H-%M-%S") }.xls")
@@ -88,7 +93,8 @@ module WulinMaster
         sheet.set_row(i, 16)
         columns.each do |column|
           value = column.json(object)
-          value = value.kind_of?(Hash) ? value[column.option_text_attribute].to_s : value.to_s
+          value = format_value(value, column)
+
           value.gsub!("\r", "") # Multiline fix
           sheet.write_string(i, j, value)
           j += 1
@@ -96,5 +102,20 @@ module WulinMaster
         i += 1
       end
     end
+    
+    private
+    
+    def format_value(value, column)
+      return value if String === value
+      
+      if Hash === value
+        value[column.option_text_attribute].to_s
+      elsif Array === value
+        value.map{|x| x[column.option_text_attribute].to_s }.join(',')
+      else
+        value.to_s
+      end
+    end
+    
   end
 end
