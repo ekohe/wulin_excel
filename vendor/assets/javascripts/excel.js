@@ -1,15 +1,4 @@
-$(document).ready(function() {
-  // Add click handler on the toolbar item
-  $(".excel_export").live('click', function() {
-    var grid_name = $(this).closest('.grid_container').attr('id').replace(/^grid_/, '');
-    var excel = new Excel(grid_name);
-    if (!excel.sendExcelRequest()) {
-      displayErrorMessage("Excel generation failed. Please try again later.");
-    }
-    return false;      
-  });
-});
-
+// Excel Object definition
 (function($) {
   function Excel(gridName) {
     var $grid;
@@ -42,7 +31,7 @@ $(document).ready(function() {
       $paramsUrl += colArray.join();
     }
   
-    function requestExcel() {	
+    function requestExcel() { 
       var inputs = '<input type="hidden" name="columns" value="'+ $paramsUrl +'" />';
       
       // Add sorting, filters and params from the loader
@@ -55,7 +44,25 @@ $(document).ready(function() {
     
     init();
 
-		return {"sendExcelRequest": sendExcelRequest};
+    return {"sendExcelRequest": sendExcelRequest};
   }
-	$.extend(true, window, { Excel: Excel });
+  $.extend(true, window, { Excel: Excel });
 })(jQuery);
+
+
+// Excel action
+WulinMaster.actions.Excel = $.extend({}, WulinMaster.actions.BaseAction, {
+  name: 'excel',
+
+  handler: function() {
+    var grid = this.getGrid();
+    var excel = new Excel(grid.name);
+    if (!excel.sendExcelRequest()) {
+      displayErrorMessage("Excel generation failed. Please try again later.");
+    }
+    return false;  
+  }
+});
+
+WulinMaster.ActionManager.register(WulinMaster.actions.Excel);
+
