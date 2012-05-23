@@ -35,11 +35,11 @@ module WulinMaster
       
       # Add joins (INNER JOIN)
       add_joins
+      
+      fire_callbacks :query_ready
 
       # Get all the objects
       @objects = @query.all
-      
-      fire_callbacks :query_ready
       
       # start to build xls file
       filename = File.join(Rails.root, 'tmp', "export-#{ Time.now.strftime("%Y-%m-%d-at-%H-%M-%S") }.xls")
