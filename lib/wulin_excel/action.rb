@@ -3,14 +3,14 @@ module WulinMaster
     alias_method :index_without_excel, :index
     
     def index
-      if params[:format].to_s == 'xls' and Mime::Type.lookup_by_extension("xls")
-        render_xls
+      if params[:format].to_s == 'xlsx' and Mime::Type.lookup_by_extension("xlsx")
+        render_xlsx
         return
       end
       index_without_excel      
     end  
     
-    def render_xls      
+    def render_xlsx   
       # Create initial query object
       @query = grid.model
       
@@ -42,8 +42,8 @@ module WulinMaster
       @objects = @query.all
       
       # start to build xls file
-      filename = File.join(Rails.root, 'tmp', "export-#{ Time.now.strftime("%Y-%m-%d-at-%H-%M-%S") }.xls")
-      workbook = WriteExcel.new(filename)
+      filename = File.join(Rails.root, 'tmp', "export-#{ Time.now.strftime("%Y-%m-%d-at-%H-%M-%S") }.xlsx")
+      workbook = WriteXLSX.new(filename)
       worksheet  = workbook.add_worksheet
       
       columns = params[:columns].split(',').map{|x| x.split('~')}.map{|x| {'name' => x[0], 'width' => x[1]}}
@@ -59,7 +59,7 @@ module WulinMaster
       
       # close the workbook and render file
       workbook.close
-      send_data File.read(filename), :filename => "#{grid.name}-#{Time.now.to_s(:db)}.xls"
+      send_data File.read(filename), :filename => "#{grid.name}-#{Time.now.to_s(:db)}.xlsx"
     end
 
   protected
@@ -94,9 +94,12 @@ module WulinMaster
         columns.each do |column|
           value = column.json(object)
           value = format_value(value, column)
-
-          value.gsub!("\r", "") # Multiline fix
-          sheet.write_string(i, j, value)
+          if Numeric === value
+            sheet.write_number(i, j, value)
+          else
+            value.gsub!("\r", "") # Multiline fix
+            sheet.write_string(i, j, value.to_s)
+          end
           j += 1
         end
         i += 1
@@ -113,7 +116,7 @@ module WulinMaster
       elsif Array === value
         value.map{|x| x[column.option_text_attribute].to_s }.join(',')
       else
-        value.to_s
+        value
       end
     end
     

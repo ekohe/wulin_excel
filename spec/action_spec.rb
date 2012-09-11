@@ -46,20 +46,20 @@ describe CountriesController, :type => :controller do
       controller.stub!(:build_worksheet_content) { true }
     end
     
-    it "should call render_xls if request format is xls" do
-      controller.stub!(:params).and_return({:format => 'xls'})
-      controller.should_receive(:render_xls)
+    it "should call render_xlsx if request format is xls" do
+      controller.stub!(:params).and_return({:format => 'xlsx'})
+      controller.should_receive(:render_xlsx)
       controller.index
     end
     
-    it "should not call render_xls if request format is not xls" do
+    it "should not call render_xlsx if request format is not xls" do
       controller.stub!(:params).and_return({:format => "json"})
-      controller.should_not_receive(:render_xls)
+      controller.should_not_receive(:render_xlsx)
       controller.should_receive(:index_without_excel)
       controller.index
     end
     
-    describe "render_xls" do
+    describe "render_xlsx" do
       before :each do
         controller.stub!(:send_data) { true }
         File.stub!(:read) { true }
@@ -67,28 +67,28 @@ describe CountriesController, :type => :controller do
         @mock_file.stub!(:close) { true }
       end
       
-      it "should render xls data" do
+      it "should render xlsx data" do
         controller.should_receive(:send_data)
-        controller.render_xls
+        controller.render_xlsx
       end
 
       it "should only select WulinExcel::MAXIMUM_NUMBER_OF_ROWS defined rows" do
         Country.should_receive(:limit).with(65535)
-        controller.render_xls
+        controller.render_xlsx
       end
 
-      it "should create a xls file and create a xls worksheet, then close it" do
-        @filename = "test.xls"
+      it "should create a xlsx file and create a xlsx worksheet, then close it" do
+        @filename = "test.xlsx"
         @timestamp_str = "2011-08-30-at-18-30-00"
         Time.stub_chain(:now, :strftime) { @timestamp_str }
         
-        File.should_receive(:join).with(Rails.root, 'tmp', "export-#{@timestamp_str}.xls").and_return(@filename)
+        File.should_receive(:join).with(Rails.root, 'tmp', "export-#{@timestamp_str}.xlsx").and_return(@filename)
         
         WriteExcel.should_receive(:new).with(@filename).and_return(@mock_file)
         @mock_file.should_receive(:add_worksheet)
         @mock_file.should_receive(:close)
         
-        controller.render_xls
+        controller.render_xlsx
       end
     end
   end

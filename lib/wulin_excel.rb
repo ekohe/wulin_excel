@@ -15,8 +15,10 @@ WulinMaster::Grid.add_default_action "excel"
 WulinMaster::add_javascript 'excel.js'
 WulinMaster::add_stylesheet 'excel.css'
 
-# Register xls mime type
+# Register xls/xlsx mime type
 Mime::Type.register "application/vnd.ms-excel", :xls
+Mime::Type.register "application/vnd.openxmlformats-offedocument.spreadsheetml.sheet", :xlsx
 
-require 'writeexcel'
+# require 'writeexcel'
+require 'write_xlsx'
 require 'wulin_excel/action'

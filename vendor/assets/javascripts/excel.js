@@ -39,7 +39,7 @@
        var pair = this.split('=');
        inputs += '<input type="hidden" name="'+ pair[0] +'" value="'+ pair[1] +'" />'; 
       });
-      $('<form action="'+ $grid.path +'.xls" method="GET">' + inputs + '</form>').appendTo('body').submit().remove();
+      $('<form action="'+ $grid.path +'.xlsx" method="GET">' + inputs + '</form>').appendTo('body').submit().remove();
     }
     
     init();
