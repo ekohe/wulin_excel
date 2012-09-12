@@ -97,8 +97,9 @@ module WulinMaster
           if Numeric === value
             sheet.write_number(i, j, value)
           else
+            value = value.to_s
             value.gsub!("\r", "") # Multiline fix
-            sheet.write_string(i, j, value.to_s)
+            sheet.write_string(i, j, value)
           end
           j += 1
         end
