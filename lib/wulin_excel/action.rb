@@ -10,7 +10,7 @@ module WulinMaster
       index_without_excel      
     end  
     
-    def render_xlsx   
+    def render_xlsx
       # Create initial query object
       @query = grid.model
       
@@ -40,6 +40,13 @@ module WulinMaster
 
       # Get all the objects
       @objects = @query.all
+      
+      # Apply virtual attribute order
+      apply_virtual_order
+      
+      # Apply virtual attribute filter
+      apply_virtual_filter
+      
       
       # start to build xls file
       filename = File.join(Rails.root, 'tmp', "export-#{ Time.now.strftime("%Y-%m-%d-at-%H-%M-%S") }.xlsx")
