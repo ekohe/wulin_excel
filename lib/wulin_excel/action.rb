@@ -11,8 +11,10 @@ module WulinMaster
     end  
     
     def render_xlsx
+      fire_callbacks :initialize_query
+
       # Create initial query object
-      @query = grid.model
+      @query = @query || grid.model
       
       # Make sure the relation method is called to correctly initialize it
       # We had issues where it's not initialized through the relation method when using
