@@ -26,7 +26,7 @@
       $paramsUrl = '';
       var colArray = [];
       $.each($grid.getColumns(), function(index, value) {
-        colArray.push(value.id + '~' + value.width)
+        colArray.push(value.field + '~' + value.width)
       });
       $paramsUrl += colArray.join();
     }

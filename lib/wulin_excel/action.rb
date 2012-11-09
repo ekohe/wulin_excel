@@ -56,7 +56,7 @@ module WulinMaster
       worksheet  = workbook.add_worksheet
       
       columns = params[:columns].split(',').map{|x| x.split('~')}.map{|x| {'name' => x[0], 'width' => x[1]}}
-      
+
       # build the header row for worksheet
       build_worksheet_header(workbook, worksheet, columns)
       
@@ -122,9 +122,7 @@ module WulinMaster
       return value if String === value
       
       if Hash === value
-        value[column.option_text_attribute].to_s
-      elsif Array === value
-        value.map{|x| x[column.option_text_attribute].to_s }.join(',')
+        value[column.name][column.option_text_attribute].to_s
       else
         value
       end
