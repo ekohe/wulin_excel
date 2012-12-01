@@ -122,7 +122,7 @@ module WulinMaster
       return value if String === value
       
       if Hash === value
-        value[column.name][column.option_text_attribute].to_s
+        value[column.field_name] ? value[column.field_name][column.option_text_attribute].to_s : value.inspect
       else
         value
       end
