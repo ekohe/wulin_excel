@@ -33,11 +33,10 @@
   
     function requestExcel() { 
       var inputs = '<input type="hidden" name="columns" value="'+ $paramsUrl +'" />';
-      
       // Add sorting, filters and params from the loader
       jQuery.each(($grid.query.replace('?', '') + "&" + $grid.loader.conditionalURI()).split('&'), function(){ 
        var pair = this.split('=');
-       inputs += '<input type="hidden" name="'+ pair[0] +'" value="'+ pair[1] +'" />'; 
+       inputs += '<input type="hidden" name="'+ pair[0] +'" value="'+ decodeURIComponent(pair[1]) +'" />'; 
       });
       $('<form action="'+ $grid.path +'.xlsx" method="GET">' + inputs + '</form>').appendTo('body').submit().remove();
     }
