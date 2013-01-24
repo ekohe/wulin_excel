@@ -69,7 +69,7 @@ module WulinMaster
     def construct_excel_columns(columns)
       excel_columns = []
       columns.each do |column|
-        excel_columns << grid.columns.find{|col| col.name.to_s == column["name"].to_s }
+        excel_columns << grid.columns.find{|col| col.full_name == column["name"].to_s || col.name.to_s == column["name"].to_s }
       end
       excel_columns.compact # In case there's a column passed in the params[:column] that doesn't exist
     end
@@ -79,9 +79,8 @@ module WulinMaster
       header_format.set_bold
       header_format.set_align('top')
       sheet.set_row(0, 16, header_format)
-
       columns.each_with_index do |column, index|
-        column_from_grid = grid.columns.find{|col| col.name.to_s == column["name"].to_s}
+        column_from_grid = grid.columns.find{|col| col.full_name == column["name"].to_s || col.name.to_s == column["name"].to_s}
         label_text = column_from_grid ? column_from_grid.label : column["name"]
         sheet.write_string(0, index, label_text)
         sheet.set_column(index, index,  column["width"].to_i/6)
