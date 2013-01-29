@@ -10,7 +10,7 @@
     }
     
     function sendExcelRequest() {
-      if (($grid==null) || ($grid.loader==null)) 
+      if (($grid === null) || ($grid.loader === null))
         return false;
       
       // Get columns order and size
@@ -26,17 +26,17 @@
       $paramsUrl = '';
       var colArray = [];
       $.each($grid.getColumns(), function(index, value) {
-        colArray.push(value.id + '~' + value.width)
+        colArray.push(value.id + '~' + value.width);
       });
       $paramsUrl += colArray.join();
     }
   
-    function requestExcel() { 
+    function requestExcel() {
       var inputs = '<input type="hidden" name="columns" value="'+ $paramsUrl +'" />';
       // Add sorting, filters and params from the loader
-      jQuery.each(($grid.query.replace('?', '') + "&" + $grid.loader.conditionalURI()).split('&'), function(){ 
+      jQuery.each(($grid.query.replace('?', '') + "&" + $grid.loader.conditionalURI()).split('&'), function(){
        var pair = this.split('=');
-       inputs += '<input type="hidden" name="'+ pair[0] +'" value="'+ decodeURIComponent(pair[1]) +'" />'; 
+       inputs += '<input type="hidden" name="'+ pair[0] +'" value="'+ decodeURIComponent(pair[1]) +'" />';
       });
       $('<form action="'+ $grid.path +'.xlsx" method="GET">' + inputs + '</form>').appendTo('body').submit().remove();
     }
@@ -59,7 +59,7 @@ WulinMaster.actions.Excel = $.extend({}, WulinMaster.actions.BaseAction, {
     if (!excel.sendExcelRequest()) {
       displayErrorMessage("Excel generation failed. Please try again later.");
     }
-    return false;  
+    return false;
   }
 });
 
