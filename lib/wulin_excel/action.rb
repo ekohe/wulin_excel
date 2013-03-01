@@ -114,7 +114,16 @@ module WulinMaster
       return value if String === value
       
       if Hash === value
-        value[column.field_name] ? value[column.field_name][column.option_text_attribute].to_s : value.inspect
+        item = value[column.field_name]
+        if item
+          if Hash === item
+            item[column.option_text_attribute].to_s
+          elsif Array === item
+            item.map{|x| x[column.option_text_attribute]}.join(",")
+          end
+        else
+          value.inspect
+        end
       else
         value
       end
