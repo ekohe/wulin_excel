@@ -21,6 +21,8 @@ module WulinMaster
       #  the where method
       grid.model.relation if grid.model.respond_to?(:relation)
 
+      fire_callbacks :query_initialized
+
       # Add the necessary where statements to the query
       construct_filters
 
