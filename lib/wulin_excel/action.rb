@@ -119,7 +119,8 @@ module WulinMaster
         item = value[column.field_name]
         if item
           if Hash === item
-            item[column.option_text_attribute].to_s
+            v = item[column.option_text_attribute]
+            Numeric === v ? v : v.to_s
           elsif Array === item
             item.map{|x| x[column.option_text_attribute]}.join(",")
           end
