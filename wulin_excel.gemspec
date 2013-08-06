@@ -6,11 +6,11 @@ Gem::Specification.new do |s|
   s.name        = "wulin_excel"
   s.version     = WulinExcel::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["TODO: Write your name"]
-  s.email       = ["TODO: Write your email address"]
+  s.authors     = ["Ekohe"]
+  s.email       = ["dev@ekohe.com"]
   s.homepage    = "http://rubygems.org/gems/wulin_excel"
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{Excel export support for WulinMaster}
+  s.description = %q{Excel export support for WulinMaster}
 
   s.rubyforge_project = "wulin_excel"
 
