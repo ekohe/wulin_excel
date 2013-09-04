@@ -59,7 +59,7 @@ module WulinMaster
       excel_columns = construct_excel_columns(columns)
       
       # build the content rows for worksheet
-      build_worksheet_content(worksheet, @objects, excel_columns)
+      build_worksheet_content(workbook, worksheet, @objects, excel_columns)
       
       # close the workbook and render file
       workbook.close
@@ -89,20 +89,22 @@ module WulinMaster
       end
     end
     
-    def build_worksheet_content(sheet, objects, columns)
+    def build_worksheet_content(book, sheet, objects, columns)
+      wrap_text_format = book.add_format
+      wrap_text_format.set_text_wrap
       i = 1
       objects.each do |object|
         j = 0
-        sheet.set_row(i, 16)
+        sheet.set_row(i)
         columns.each do |column|
           value = column.json(object)
           value = format_value(value, column)
           if Numeric === value
-            sheet.write_number(i, j, value)
+            sheet.write_number(i, j, value, wrap_text_format)
           else
             value = value.to_s
             value.gsub!("\r", "") # Multiline fix
-            sheet.write_string(i, j, value)
+            sheet.write_string(i, j, value, wrap_text_format)
           end
           j += 1
         end
