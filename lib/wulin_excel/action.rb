@@ -1,21 +1,21 @@
 module WulinMaster
   module Actions
     alias_method :index_without_excel, :index
-    
+
     def index
       if params[:format].to_s == 'xlsx' and Mime::Type.lookup_by_extension("xlsx")
         render_xlsx
         return
       end
-      index_without_excel      
-    end  
-    
+      index_without_excel
+    end
+
     def render_xlsx
       fire_callbacks :initialize_query
 
       # Create initial query object
       @query = @query || grid.model
-      
+
       # Make sure the relation method is called to correctly initialize it
       # We had issues where it's not initialized through the relation method when using
       #  the where method
@@ -33,41 +33,41 @@ module WulinMaster
 
       # Add order
       parse_ordering
-      
+
       # Add includes (OUTER JOIN)
       add_includes
-      
+
       # Add joins (INNER JOIN)
       add_joins
-      
+
       fire_callbacks :query_ready
 
       # Get all the objects
       @objects = @query.all
-      
+
       # start to build xls file
       filename = File.join(Rails.root, 'tmp', "export-#{ Time.now.strftime("%Y-%m-%d-at-%H-%M-%S") }.xlsx")
       workbook = WriteXLSX.new(filename)
       worksheet  = workbook.add_worksheet
-      
+
       columns = params[:columns].split(',').map{|x| x.split('~')}.map{|x| {'name' => x[0], 'width' => x[1]}}
 
       # build the header row for worksheet
       build_worksheet_header(workbook, worksheet, columns)
-      
+
       # construct excel columns
       excel_columns = construct_excel_columns(columns)
-      
+
       # build the content rows for worksheet
       build_worksheet_content(workbook, worksheet, @objects, excel_columns)
-      
+
       # close the workbook and render file
       workbook.close
       send_data File.read(filename), :filename => "#{grid.name}-#{Time.now.to_s(:db)}.xlsx"
     end
 
   protected
-  
+
     def construct_excel_columns(columns)
       excel_columns = []
       columns.each do |column|
@@ -75,7 +75,7 @@ module WulinMaster
       end
       excel_columns.compact # In case there's a column passed in the params[:column] that doesn't exist
     end
-    
+
     def build_worksheet_header(book, sheet, columns)
       header_format = book.add_format
       header_format.set_bold
@@ -88,10 +88,11 @@ module WulinMaster
         sheet.set_column(index, index,  column["width"].to_i/6)
       end
     end
-    
+
     def build_worksheet_content(book, sheet, objects, columns)
       wrap_text_format = book.add_format
       wrap_text_format.set_text_wrap
+      datetime_format = book.add_format(:num_format => 'dd/mm/yy hh:mm', :align => 'left')
       i = 1
       objects.each do |object|
         j = 0
@@ -99,8 +100,16 @@ module WulinMaster
         columns.each do |column|
           value = column.json(object)
           value = format_value(value, column)
+
           if Numeric === value
             sheet.write_number(i, j, value, wrap_text_format)
+          elsif column.datetime_value.kind_of?(ActiveSupport::TimeWithZone)
+            begin
+              formatted_datetime = column.datetime_value.utc.to_json.sub(/Z\"$/, '').sub(/^\"/, '')+".000"
+              sheet.write_date_time(i, j, formatted_datetime, datetime_format)
+            rescue
+              sheet.write_string(i, j, value.to_s, wrap_text_format)
+            end
           else
             value = value.to_s
             value.gsub!("\r", "") # Multiline fix
@@ -111,12 +120,12 @@ module WulinMaster
         i += 1
       end
     end
-    
+
     private
-    
+
     def format_value(value, column)
       return value if String === value
-      
+
       if Hash === value
         item = value[column.field_name]
         if item
@@ -133,6 +142,6 @@ module WulinMaster
         value
       end
     end
-    
+
   end
 end
