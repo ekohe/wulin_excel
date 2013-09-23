@@ -92,7 +92,9 @@ module WulinMaster
     def build_worksheet_content(book, sheet, objects, columns)
       wrap_text_format = book.add_format
       wrap_text_format.set_text_wrap
-      datetime_format = book.add_format(:num_format => 'dd/mm/yy hh:mm', :align => 'left')
+
+      datetime_excel_formats = {}
+
       i = 1
       objects.each do |object|
         j = 0
@@ -103,9 +105,13 @@ module WulinMaster
 
           if Numeric === value
             sheet.write_number(i, j, value, wrap_text_format)
-          elsif column.datetime_value.kind_of?(ActiveSupport::TimeWithZone)
+          elsif (not column.datetime_value.nil?)
             begin
-              formatted_datetime = column.datetime_value.utc.to_json.sub(/Z\"$/, '').sub(/^\"/, '')+".000"
+              formatted_datetime = column.datetime_value.strftime("%Y-%m-%dT%H:%M:%S.000")
+              datetime_excel_formats[column.datetime_excel_format] ||= book.add_format(:num_format => column.datetime_excel_format, :align => 'center')
+
+              datetime_format = datetime_excel_formats[column.datetime_excel_format]
+
               sheet.write_date_time(i, j, formatted_datetime, datetime_format)
             rescue
               sheet.write_string(i, j, value.to_s, wrap_text_format)
