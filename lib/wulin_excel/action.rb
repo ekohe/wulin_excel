@@ -43,7 +43,7 @@ module WulinMaster
       fire_callbacks :query_ready
 
       # Get all the objects
-      @objects = @query.all
+      @objects = @query.all unless @query.blank?
 
       # start to build xls file
       filename = File.join(Rails.root, 'tmp', "export-#{ Time.now.strftime("%Y-%m-%d-at-%H-%M-%S") }.xlsx")
@@ -124,7 +124,7 @@ module WulinMaster
           j += 1
         end
         i += 1
-      end
+      end if objects.present?
     end
 
     private
