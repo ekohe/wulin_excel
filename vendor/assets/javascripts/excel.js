@@ -8,29 +8,29 @@
       $grid = gridManager.getGrid(gridName);
       $paramsUrl = '';
     }
-
+    
     function sendExcelRequest() {
       if (($grid === null) || ($grid.loader === null))
         return false;
-
+      
       // Get columns order and size
       addColumnSizeAndOrder();
 
       // Request download
       requestExcel();
-
+      
       return true;
     }
-
+    
     function addColumnSizeAndOrder() {
       $paramsUrl = '';
       var colArray = [];
-      $.each($grid.columns, function(index, value) {
+      $.each($grid.getColumns(), function(index, value) {
         colArray.push(value.id + '~' + value.width);
       });
       $paramsUrl += colArray.join();
     }
-
+  
     function requestExcel() {
       var inputs = '<input type="hidden" name="columns" value="'+ $paramsUrl +'" />';
       // Add sorting, filters and params from the loader
@@ -40,7 +40,7 @@
       });
       $('<form action="'+ $grid.path +'.xlsx" method="GET">' + inputs + '</form>').appendTo('body').submit().remove();
     }
-
+    
     init();
 
     return {"sendExcelRequest": sendExcelRequest};
