@@ -24,21 +24,29 @@
 
     function addColumnSizeAndOrder() {
       $paramsUrl = '';
+      var arr = {};
       var colArray = [];
       var visible_columns = $grid.getColumns();
       var all_columns = $grid.columns;
       var export_columns = [];
 
       $.each(visible_columns, function(index, value){
-        if(value.excel_export != true){
-          export_columns.push(value);
-        }
+        export_columns.push(value);
       })
       $.each(all_columns, function(index, value){
-        if((value.visible == false) && (value.excel_export == true)){
+        if(value.excel_export == true){
           export_columns.push(value);
         }
       })
+
+      $.each(export_columns, function(i, v){
+        arr[export_columns[i]['column_name']] = export_columns[i];
+      })
+      export_columns = [];
+      for(key in arr){
+        export_columns.push(arr[key]);
+      }
+
       $.each(export_columns, function(index, value) {
         colArray.push(value.id + '~' + value.width);
       });
