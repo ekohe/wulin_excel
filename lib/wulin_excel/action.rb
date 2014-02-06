@@ -4,7 +4,11 @@ module WulinMaster
 
     def index
       if params[:format].to_s == 'xlsx' and Mime::Type.lookup_by_extension("xlsx")
-        render_xlsx
+        if params[:filepath] && params[:filename]
+          send_file params[:filepath], :filename => params[:filename]
+        else
+          render_xlsx
+        end
         return
       end
       index_without_excel
@@ -42,6 +46,12 @@ module WulinMaster
 
       fire_callbacks :query_ready
 
+      # If more than 2000 rows, cancel
+      if @query.count > 2000
+        render :js => "displayErrorMessage('Use pivot for large excel export')"
+        return false
+      end
+
       # Get all the objects
       @objects = @query.all unless @query.blank?
 
@@ -63,7 +73,7 @@ module WulinMaster
 
       # close the workbook and render file
       workbook.close
-      send_data File.read(filename), :filename => "#{grid.name}-#{Time.now.to_s(:db)}.xlsx"
+      render :json => {:file => filename, :name => "#{grid.name}-#{Time.now.to_s(:db)}.xlsx"}
     end
 
   protected

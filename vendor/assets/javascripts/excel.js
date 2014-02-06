@@ -60,7 +60,18 @@
        var pair = this.split('=');
        inputs += '<input type="hidden" name="'+ pair[0] +'" value="'+ decodeURIComponent(pair[1]) +'" />';
       });
-      $('<form action="'+ $grid.path +'.xlsx" method="GET">' + inputs + '</form>').appendTo('body').submit().remove();
+      var $form =  $('<form action="'+ $grid.path +'.xlsx" method="GET" data-remote=true>' + inputs + '</form>');
+      $form.on("ajax:success", function(data, status, xhr){
+        $form.remove();
+        if(status.file && status.name) {
+          // another form for downloading
+          var input_1 = '<input type="hidden" name="filepath" value="'+ status.file +'" />';
+          var input_2 = '<input type="hidden" name="filename" value="'+ status.name +'" />';
+          $('<form action="'+ $grid.path +'.xlsx" method="GET">' + input_1 + input_2 + '</form>').appendTo('body').submit().remove();
+        }
+        return false;
+      })
+      $form.appendTo('body').submit();
     }
 
     init();
