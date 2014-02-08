@@ -48,7 +48,7 @@ module WulinMaster
 
       # If more than 2000 rows, cancel
       if @query.count > 2000
-        render :js => "displayErrorMessage('Use pivot for large excel export')"
+        render :js => "displayErrorMessage('The excel file is too large. " + (APP_CONFIG['large_excel_warning'] || "") + "')"
         return false
       end
 
