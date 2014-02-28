@@ -53,6 +53,27 @@
       $paramsUrl += colArray.join();
     }
 
+    function displayLoadingDialog() {
+      dialogHtml = $("<div/>").
+                  attr('id', 'excel_loading').
+                  attr('title', 'Excel export').
+                  append("<h4>").
+                  append('<p style="text-align: center; margin-top: 25px;">Please wait while your Excel document is being prepared.</p>').
+                  append('<p style="text-align: center;"><img src="/assets/ui/load_indicator_bar_small.gif"/></p>').
+                  append("</h4>").
+                  addClass('ui-state-highlight').
+                  css('display', 'none');
+
+      $('body').append(dialogHtml);
+
+      $('#excel_loading').dialog({
+        autoOpen: true,
+        width: 380,
+        buttons: {},
+        modal: true
+      });
+    }
+
     function requestExcel() {
       var inputs = '<input type="hidden" name="columns" value="'+ $paramsUrl +'" />';
       // Add sorting, filters and params from the loader
@@ -61,16 +82,20 @@
        inputs += '<input type="hidden" name="'+ pair[0] +'" value="'+ decodeURIComponent(pair[1]) +'" />';
       });
       var $form =  $('<form action="'+ $grid.path +'.xlsx" method="GET" data-remote=true>' + inputs + '</form>');
+      var screenName = $grid.screen;
       $form.on("ajax:success", function(data, status, xhr){
+        $('#excel_loading').dialog('close');
         $form.remove();
         if(status.file && status.name) {
           // another form for downloading
           var input_1 = '<input type="hidden" name="filepath" value="'+ status.file +'" />';
           var input_2 = '<input type="hidden" name="filename" value="'+ status.name +'" />';
-          $('<form action="'+ $grid.path +'.xlsx" method="GET">' + input_1 + input_2 + '</form>').appendTo('body').submit().remove();
+          var input_3 = '<input type="hidden" name="screen" value="'+ screenName +'" />';
+          $('<form action="'+ $grid.path +'.xlsx" method="GET">' + input_1 + input_2 + input_3 + '</form>').appendTo('body').submit().remove();
         }
         return false;
       })
+      displayLoadingDialog();
       $form.appendTo('body').submit();
     }
 

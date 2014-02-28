@@ -5,7 +5,12 @@ module WulinMaster
     def index
       if params[:format].to_s == 'xlsx' and Mime::Type.lookup_by_extension("xlsx")
         if params[:filepath] && params[:filename]
-          send_file params[:filepath], :filename => params[:filename]
+          file_to_send = File.join(Rails.root, 'tmp', params[:filepath])
+          if File.dirname(file_to_send) != File.join(Rails.root, 'tmp')
+            render :text => "Unauthorized", :status => 403
+          else
+            send_file file_to_send, :filename => params[:filename]
+          end
         else
           render_xlsx
         end
@@ -73,7 +78,7 @@ module WulinMaster
 
       # close the workbook and render file
       workbook.close
-      render :json => {:file => filename, :name => "#{grid.name}-#{Time.now.to_s(:db)}.xlsx"}
+      render :json => {:file => File.basename(filename), :name => "#{grid.name}-#{Time.now.to_s(:db)}.xlsx"}
     end
 
   protected
