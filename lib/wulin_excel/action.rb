@@ -37,9 +37,6 @@ module WulinMaster
 
       fire_callbacks :query_filters_ready
 
-      # Always add a limit and offset
-      @query = @query.limit(WulinExcel::MAXIMUM_NUMBER_OF_ROWS).offset(0)
-
       # Add order
       parse_ordering
 
@@ -51,9 +48,13 @@ module WulinMaster
 
       fire_callbacks :query_ready
 
-      # If more than 2000 rows, cancel
-      if @query.count > 2000
-        render :js => "displayErrorMessage('The excel file is too large. " + (APP_CONFIG['large_excel_warning'] || "") + "')"
+      # If more than WulinExcel::MAXIMUM_NUMBER_OF_ROWS rows, cancel
+      if @query.count > WulinExcel::MAXIMUM_NUMBER_OF_ROWS
+        message = "The excel file is too large."
+        if defined?(APP_CONFIG) && APP_CONFIG['wulin_excel'] && APP_CONFIG['wulin_excel']['large_excel_warning']
+          message += " " + APP_CONFIG['wulin_excel']['large_excel_warning']
+        end
+        render :js => "displayErrorMessage('#{message}');"
         return false
       end
 
