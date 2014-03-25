@@ -40,7 +40,7 @@
       })
 
       $.each(export_columns, function(i, v){
-        arr[export_columns[i]['column_name']] = export_columns[i];
+        arr[export_columns[i]['id']] = export_columns[i];
       })
       export_columns = [];
       for(key in arr){
