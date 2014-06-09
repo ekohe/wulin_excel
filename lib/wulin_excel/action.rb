@@ -61,6 +61,8 @@ module WulinMaster
       # Get all the objects
       @objects = @query.all unless @query.blank?
 
+      fire_callbacks :objects_ready
+
       # start to build xls file
       filename = File.join(Rails.root, 'tmp', "export-#{ Time.now.strftime("%Y-%m-%d-at-%H-%M-%S") }.xlsx")
       workbook = WriteXLSX.new(filename)
