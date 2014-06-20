@@ -136,7 +136,7 @@ module WulinMaster
             end
           else
             value = value.to_s
-            value.gsub!("\r", "") # Multiline fix
+            value = value.gsub("\r", "") # Multiline fix
             sheet.write_string(i, j, value, wrap_text_format)
           end
           j += 1
