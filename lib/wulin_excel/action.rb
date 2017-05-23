@@ -7,7 +7,7 @@ module WulinMaster
         if params[:filepath] && params[:filename]
           file_to_send = File.join(Rails.root, 'tmp', params[:filepath])
           if File.dirname(file_to_send) != File.join(Rails.root, 'tmp')
-            render :text => "Unauthorized", :status => 403
+            render :plain => "Unauthorized", :status => 403
           else
             send_file file_to_send, :filename => params[:filename]
           end
