@@ -107,9 +107,9 @@
 })(jQuery);
 
 
-// Excel action
-WulinMaster.actions.Excel = $.extend({}, WulinMaster.actions.BaseAction, {
-  name: 'excel',
+// Export action
+WulinMaster.actions.Export = $.extend({}, WulinMaster.actions.BaseAction, {
+  name: 'export',
 
   handler: function() {
     var grid = this.getGrid();
@@ -121,5 +121,4 @@ WulinMaster.actions.Excel = $.extend({}, WulinMaster.actions.BaseAction, {
   }
 });
 
-WulinMaster.ActionManager.register(WulinMaster.actions.Excel);
-
+WulinMaster.ActionManager.register(WulinMaster.actions.Export);
