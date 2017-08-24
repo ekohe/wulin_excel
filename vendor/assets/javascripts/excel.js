@@ -53,25 +53,30 @@
       $paramsUrl += colArray.join();
     }
 
-    function displayLoadingDialog() {
-      dialogHtml = $("<div/>").
-                  attr('id', 'excel_loading').
-                  attr('title', 'Excel export').
-                  append("<h4>").
-                  append('<p style="text-align: center; margin-top: 25px;">Please wait while your Excel document is being prepared.</p>').
-                  append('<p style="text-align: center;"><img src="/assets/ui/load_indicator_bar_small.gif"/></p>').
-                  append("</h4>").
-                  addClass('ui-state-highlight').
-                  css('display', 'none');
+    function displayLoadingModal() {
+      var $excelModal = $('<div/>')
+        .attr({'id': 'excel-modal'})
+        .addClass('modal')
+        .width('500px')
+        .appendTo($('body'));
+      var $modalContent = $('<div/>')
+        .addClass('modal-content')
+        .append($('<h5/>').text('Excel export'))
+        .append($('<p/>').text('Please wait while your Excel document is being prepared.'))
+        .append($('<div/>').addClass('progress').append($('<div/>').addClass('indeterminate')))
+        .appendTo($excelModal);
+      var $modalFooter = $('<div/>')
+        .addClass('modal-footer')
+        .append($('<div/>').addClass('btn modal-close').text('Close'))
+        .appendTo($excelModal);
 
-      $('body').append(dialogHtml);
-
-      $('#excel_loading').dialog({
-        autoOpen: true,
-        width: 380,
-        buttons: {},
-        modal: true
+      $excelModal.modal({
+        complete: function() {
+          $excelModal.remove();
+        }
       });
+
+      $excelModal.modal('open');
     }
 
     function requestExcel() {
@@ -84,7 +89,7 @@
       var $form =  $('<form action="'+ $grid.path +'.xlsx" method="GET" data-remote=true>' + inputs + '</form>');
       var screenName = $grid.screen;
       $form.on("ajax:success", function(data, status, xhr){
-        $('#excel_loading').dialog('close');
+        $('#excel-modal').modal('close');
         $form.remove();
         if(status.file && status.name) {
           // another form for downloading
@@ -95,7 +100,7 @@
         }
         return false;
       })
-      displayLoadingDialog();
+      displayLoadingModal();
       $form.appendTo('body').submit();
     }
 
