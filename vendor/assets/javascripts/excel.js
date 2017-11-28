@@ -54,29 +54,19 @@
     }
 
     function displayLoadingModal() {
-      var $excelModal = $('<div/>')
+      var $excelModal = Ui.baseModal()
         .attr({'id': 'excel-modal'})
-        .addClass('modal')
-        .width('500px')
-        .appendTo($('body'));
-      var $modalContent = $('<div/>')
-        .addClass('modal-content')
+        .width('500px');
+
+      $excelModal.find('.modal-content')
         .append($('<h5/>').text('Excel export'))
         .append($('<p/>').text('Please wait while your Excel document is being prepared.'))
         .append($('<div/>').addClass('progress').append($('<div/>').addClass('indeterminate')))
-        .appendTo($excelModal);
+
       var $modalFooter = $('<div/>')
         .addClass('modal-footer')
         .append($('<div/>').addClass('btn modal-close').text('Close'))
         .appendTo($excelModal);
-
-      $excelModal.modal({
-        complete: function() {
-          $excelModal.remove();
-        }
-      });
-
-      $excelModal.modal('open');
     }
 
     function requestExcel() {
