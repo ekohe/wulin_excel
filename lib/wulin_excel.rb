@@ -8,8 +8,8 @@ if !defined?(WulinMaster)
   raise "WulinExcel needs WulinMaster. Make sure WulinExcel is loaded after WulinMaster configuring config.plugins properly in application.rb"
 end
 
-# Add excel export button to every grid as default toolbar item
-WulinMaster::Grid.add_default_action "export"
+# Add export button to grid as default toolbar item, choose default icon from https://material.io/icons/
+WulinMaster::Grid.add_default_action :export, icon: :file_download, global: true
 
 # Load excel javascript and stylesheet
 WulinMaster::add_javascript 'excel.js'
