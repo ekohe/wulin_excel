@@ -79,7 +79,7 @@
       var $form =  $('<form action="'+ $grid.path +'.xlsx" method="GET" data-remote=true>' + inputs + '</form>');
       var screenName = $grid.screen;
       $form.on("ajax:success", function(data, status, xhr){
-        $('#excel-modal').modal('close');
+        $('#excel-modal').modal('close').remove();
         $form.remove();
         if(status.file && status.name) {
           // another form for downloading
