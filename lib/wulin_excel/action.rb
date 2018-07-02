@@ -151,10 +151,10 @@ module WulinMaster
       return value if String === value
 
       if Hash === value
-        item = value[column.field_name]
+        item = value[column.field_name.to_sym]
         if item
           if Hash === item
-            v = item[column.source]
+            v = item[column.source.to_sym]
             Numeric === v ? v : v.to_s
           elsif Array === item
             item.map{|x| x[column.source]}.join(",")
