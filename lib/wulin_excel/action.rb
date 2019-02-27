@@ -33,6 +33,7 @@ module WulinMaster
       fire_callbacks :query_initialized
 
       # Add the necessary where statements to the query
+      @query_without_filter = @query
       construct_filters
 
       fire_callbacks :query_filters_ready
