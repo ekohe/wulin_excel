@@ -70,28 +70,30 @@
     }
 
     function requestExcel() {
-      var inputs = '<input type="hidden" name="columns" value="'+ $paramsUrl +'" />';
       // Add sorting, filters and params from the loader
+      var query = {columns: $paramsUrl};
       jQuery.each(($grid.query.replace('?', '') + "&" + $grid.loader.conditionalURI()).split('&'), function(){
        var pair = this.split('=');
-       inputs += '<input type="hidden" name="'+ pair[0] +'" value="'+ decodeURIComponent(pair[1]) +'" />';
+       query[pair[0]] = decodeURIComponent(pair[1]);
       });
-      var $form =  $('<form action="'+ $grid.path +'.xlsx" method="GET" data-remote=true>' + inputs + '</form>');
       var screenName = $grid.screen;
-      $form.on("ajax:success", function(data, status, xhr){
+
+      $.ajax({
+        url: $grid.path +'.xlsx',
+        type: 'GET',
+        data: query
+      }).success(function(status) {
         $('#excel-modal').modal('close').remove();
-        $form.remove();
         if(status.file && status.name) {
           // another form for downloading
           var input_1 = '<input type="hidden" name="filepath" value="'+ status.file +'" />';
           var input_2 = '<input type="hidden" name="filename" value="'+ status.name +'" />';
           var input_3 = '<input type="hidden" name="screen" value="'+ screenName +'" />';
-          $('<form action="'+ $grid.path +'.xlsx" method="GET">' + input_1 + input_2 + input_3 + '</form>').appendTo('body').submit().remove();
+          $('<form action="'+ $grid.path +'.xlsx" method="GET" download>' + input_1 + input_2 + input_3 + '</form>').appendTo('body').submit().remove();
         }
         return false;
       })
       displayLoadingModal();
-      $form.appendTo('body').submit();
     }
 
     init();
