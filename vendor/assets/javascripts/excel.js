@@ -70,18 +70,12 @@
     }
 
     function requestExcel() {
-      // Add sorting, filters and params from the loader
-      var query = {columns: $paramsUrl};
-      jQuery.each(($grid.query.replace('?', '') + "&" + $grid.loader.conditionalURI()).split('&'), function(){
-       var pair = this.split('=');
-       query[pair[0]] = decodeURIComponent(pair[1]);
-      });
       var screenName = $grid.screen;
+      var path = $grid.path +'.xlsx?' + $grid.query.replace('?', '') + $grid.loader.conditionalURI() + '&' + "columns=" + $paramsUrl;
 
       $.ajax({
-        url: $grid.path +'.xlsx',
-        type: 'GET',
-        data: query
+        url: path,
+        type: 'GET'
       }).success(function(status) {
         $('#excel-modal').modal('close').remove();
         if(status.file && status.name) {
