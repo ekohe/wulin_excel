@@ -152,10 +152,12 @@ module WulinMaster
       return value if String === value
 
       if Hash === value
-        item = value[column.field_name.to_sym]
+        value = value.with_indifferent_access
+        item = value[column.field_name]
         if item
           if Hash === item
-            v = item[column.source.to_sym]
+            item = item.with_indifferent_access
+            v = item[column.source]
             Numeric === v ? v : v.to_s
           elsif Array === item
             item.map{|x| x[column.source]}.join(",")
