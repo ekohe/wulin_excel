@@ -2,6 +2,16 @@ require 'wulin_excel/engine' if defined?(Rails)
 
 module WulinExcel
   MAXIMUM_NUMBER_OF_ROWS = 65535
+  @@maximum_number_of_rows = nil
+
+  module_function
+  def maximum_number_of_rows
+    @@maximum_number_of_rows || MAXIMUM_NUMBER_OF_ROWS
+  end
+
+  def maximum_number_of_rows=(value)
+    @@maximum_number_of_rows = value
+  end
 end
 
 if !defined?(WulinMaster)
