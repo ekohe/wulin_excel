@@ -21,10 +21,6 @@ end
 # Add export button to grid as default toolbar item, choose default icon from https://material.io/icons/
 WulinMaster::Grid.add_default_action :export, icon: :file_download, global: true
 
-# Load excel javascript and stylesheet
-WulinMaster::add_javascript 'excel.js'
-WulinMaster::add_stylesheet 'excel.css'
-
 # Register xls/xlsx mime type
 Mime::Type.register "application/vnd.ms-excel", :xls
 Mime::Type.register "application/vnd.openxmlformats-offedocument.spreadsheetml.sheet", :xlsx
