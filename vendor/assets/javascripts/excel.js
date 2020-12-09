@@ -79,11 +79,18 @@
       }).success(function(status) {
         $('#excel-modal').modal('close').remove();
         if(status.file && status.name) {
-          // another form for downloading
-          var input_1 = '<input type="hidden" name="filepath" value="'+ status.file +'" />';
-          var input_2 = '<input type="hidden" name="filename" value="'+ status.name +'" />';
-          var input_3 = '<input type="hidden" name="screen" value="'+ screenName +'" />';
-          $('<form action="'+ $grid.path +'.xlsx" method="GET" download>' + input_1 + input_2 + input_3 + '</form>').appendTo('body').submit().remove();
+          var req = new XMLHttpRequest()
+          req.open("GET", `${$grid.path}.xlsx?filepath=${status.file}&filename=${status.name}&screen=${screenName}`, true)
+          req.responseType = "blob"
+
+          req.onload = function (event) {
+            var blob = req.response
+            var link = document.createElement('a')
+            link.href = window.URL.createObjectURL(blob)
+            link.download = status.name
+            link.click()
+          }
+          req.send()
         }
         return false;
       })
