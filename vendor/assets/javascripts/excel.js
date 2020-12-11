@@ -89,6 +89,10 @@
             link.href = window.URL.createObjectURL(blob)
             link.download = status.name
             link.click()
+
+            // Remove the resource
+            window.URL.revokeObjectURL(blob)
+            link.remove()
           }
           req.send()
         }
