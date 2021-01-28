@@ -60,7 +60,7 @@ module WulinMaster
       end
 
       # Get all the objects
-      @objects = @query.all unless @query.blank?
+      @objects = (@query.is_a?(Array) ? @query : @query.all.to_a)
 
       fire_callbacks :objects_ready
 
