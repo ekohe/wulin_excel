@@ -30,13 +30,9 @@
       var all_columns = $grid.columns;
       var export_columns = [];
 
-      $.each(visible_columns, function(index, value){
-        export_columns.push(value);
-      })
-      $.each(all_columns, function(index, value){
-        if(value.excel_export == true){
-          export_columns.push(value);
-        }
+      visible_columns.forEach(function(column) {
+        if(column.hasOwnProperty('excel_export') && column.excel_export === false) return;
+        export_columns.push(column);
       })
 
       $.each(export_columns, function(i, v){
