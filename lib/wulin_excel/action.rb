@@ -67,54 +67,60 @@ module WulinMaster
       # start to build xls file
       filename = File.join(Rails.root, 'tmp', "export-#{ Time.now.strftime("%Y-%m-%d-at-%H-%M-%S") }.xlsx")
       workbook = WriteXLSX.new(filename)
-      worksheet  = workbook.add_worksheet
+      worksheet = workbook.add_worksheet
 
-      columns = params[:columns].split(',').map{|x| x.split('~')}.map{|x| {'name' => x[0], 'width' => x[1]}}
+      columns = params[:columns].split(',').map { |x| x.split('~') }.map { |x| {'name' => x[0], 'width' => x[1]} }
 
-      # build the header row for worksheet
-      build_worksheet_header(workbook, worksheet, columns)
-
-      # construct excel columns
-      excel_columns = construct_excel_columns(columns)
-
-      # build the content rows for worksheet
-      build_worksheet_content(workbook, worksheet, @objects, excel_columns)
+      build_worksheet(workbook, worksheet, columns)
 
       # close the workbook and render file
       workbook.close
       render :json => {:file => File.basename(filename), :name => "#{grid.name}-#{Time.now.to_s(:db)}.xlsx"}
     end
 
-  protected
+    protected
+
+    def build_worksheet(workbook, worksheet, columns)
+      cursor = 0
+      # build the header row for worksheet
+      cursor = build_worksheet_header(workbook, worksheet, columns, cursor)
+
+      # construct excel columns
+      excel_columns = construct_excel_columns(columns)
+
+      # build the content rows for worksheet
+      build_worksheet_content(workbook, worksheet, @objects, excel_columns, cursor)
+    end
 
     def construct_excel_columns(columns)
       excel_columns = []
       columns.each do |column|
-        excel_columns << grid.columns.find{|col| col.full_name == column["name"].to_s || col.name.to_s == column["name"].to_s }
+        excel_columns << grid.columns.find { |col| col.full_name == column["name"].to_s || col.name.to_s == column["name"].to_s }
       end
       excel_columns.compact # In case there's a column passed in the params[:column] that doesn't exist
     end
 
-    def build_worksheet_header(book, sheet, columns)
+    def build_worksheet_header(book, sheet, columns, cursor = 0)
       header_format = book.add_format
       header_format.set_bold
       header_format.set_align('top')
-      sheet.set_row(0, 16, header_format)
+      sheet.set_row(cursor, 16, header_format)
       columns.each_with_index do |column, index|
-        column_from_grid = grid.columns.find{|col| col.full_name == column["name"].to_s || col.name.to_s == column["name"].to_s}
+        column_from_grid = grid.columns.find { |col| col.full_name == column["name"].to_s || col.name.to_s == column["name"].to_s }
         label_text = column_from_grid ? column_from_grid.label : column["name"]
-        sheet.write_string(0, index, label_text)
-        sheet.set_column(index, index,  column["width"].to_i/6)
+        sheet.write_string(cursor, index, label_text)
+        sheet.set_column(index, index, column["width"].to_i / 6)
       end
+      cursor + 1
     end
 
-    def build_worksheet_content(book, sheet, objects, columns)
+    def build_worksheet_content(book, sheet, objects, columns, cursor = 1)
       wrap_text_format = book.add_format
       wrap_text_format.set_text_wrap
 
       datetime_excel_formats = {}
 
-      i = 1
+      i = cursor
       objects.each do |object|
         j = 0
         sheet.set_row(i)
@@ -144,6 +150,7 @@ module WulinMaster
         end
         i += 1
       end if objects.present?
+      i
     end
 
     private
@@ -160,7 +167,7 @@ module WulinMaster
             v = item[column.source]
             Numeric === v ? v : v.to_s
           elsif Array === item
-            item.map{|x| x[column.source]}.join(",")
+            item.map { |x| x[column.source] }.join(",")
           end
         else
           value.inspect
