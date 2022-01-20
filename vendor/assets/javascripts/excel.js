@@ -30,10 +30,18 @@
       var all_columns = $grid.columns;
       var export_columns = [];
 
-      visible_columns.forEach(function(column) {
-        if(column.hasOwnProperty('excel_export') && column.excel_export === false) return;
-        export_columns.push(column);
-      })
+      const
+        visible_names = visible_columns.map(col => col['column_name']),
+        visible = col => visible_names.includes(col['column_name']),
+        excelExportUndefined = col => col['excel_export'] === undefined || col['excel_export'] === null,
+        excelExport = col => col['excel_export'] === true;
+      all_columns.forEach(function(column) {
+        if (visible(column)) {
+          if (excelExport(column) || excelExportUndefined(column)) export_columns.push(column);
+        } else {
+          if (excelExport(column)) export_columns.push(column);
+        }
+      });
 
       $.each(export_columns, function(i, v){
         arr[export_columns[i]['id']] = export_columns[i];
