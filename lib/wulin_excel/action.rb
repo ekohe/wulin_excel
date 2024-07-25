@@ -75,7 +75,7 @@ module WulinMaster
 
       # close the workbook and render file
       workbook.close
-      render :json => {:file => File.basename(filename), :name => "#{grid.name}-#{Time.now.to_s(:db)}.xlsx"}
+      render :json => {:file => File.basename(filename), :name => "#{grid.name}-#{Time.now.strftime("%Y-%m-%d-at-%H-%M-%S") }.xlsx"}
     end
 
     protected
