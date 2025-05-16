@@ -51,7 +51,7 @@ module WulinMaster
 
       # If more than WulinExcel::MAXIMUM_NUMBER_OF_ROWS rows, cancel
       if @query.count > WulinExcel.maximum_number_of_rows
-        message = "The excel file is too large."
+        message = "Excelファイルが大きすぎます。"
         if defined?(APP_CONFIG) && APP_CONFIG['wulin_excel'] && APP_CONFIG['wulin_excel']['large_excel_warning']
           message += " " + APP_CONFIG['wulin_excel']['large_excel_warning']
         end

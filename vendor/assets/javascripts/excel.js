@@ -63,8 +63,8 @@
         .width('500px');
 
       $excelModal.find('.modal-content')
-        .append($('<h5/>').text('Excel export'))
-        .append($('<p/>').text('Please wait while your Excel document is being prepared.'))
+        .append($('<h5/>').text('Excelエクスポート'))
+        .append($('<p/>').text('Excelファイルを準備しています。しばらくお待ちください。'))
         .append($('<div/>').addClass('progress').append($('<div/>').addClass('indeterminate')))
 
       var $modalFooter = $('<div/>')
@@ -121,7 +121,7 @@ WulinMaster.actions.Export = $.extend({}, WulinMaster.actions.BaseAction, {
     var grid = this.getGrid();
     var excel = new Excel(grid.name);
     if (!excel.sendExcelRequest()) {
-      displayErrorMessage("Excel generation failed. Please try again later.");
+      displayErrorMessage("Excelの生成に失敗しました。後でもう一度お試しください。");
     }
     return false;
   }
