@@ -3,7 +3,7 @@
     const grid = gridManager.getGrid(gridName);
     let paramsUrl = "";
 
-    function sendExcelRequest() {
+    function sendExcelRequest(options = {}) {
       if (!grid || !grid.loader) {
         return false;
       }
@@ -12,7 +12,7 @@
       collectColumnInformation();
 
       // Request download
-      requestExcel();
+      requestExcel(options);
 
       return true;
     }
@@ -65,11 +65,17 @@
     }
 
     // Makes the AJAX request to generate and download Excel file
-    function requestExcel() {
+    function requestExcel(options) {
+      let columns = paramsUrl
+
+      if (options["columns"]) {
+        columns = options["columns"].join(",")
+      }
+
       const screenName = grid.screen;
       const baseQuery = grid.query.replace("?", "");
       const conditionalParams = grid.loader.conditionalURI();
-      const path = `${grid.path}.xlsx?${baseQuery}${conditionalParams}&columns=${paramsUrl}`;
+      const path = `${grid.path}.xlsx?${baseQuery}${conditionalParams}&columns=${columns}`;
 
       displayLoadingModal();
 
