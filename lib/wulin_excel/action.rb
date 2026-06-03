@@ -50,7 +50,12 @@ module WulinMaster
       fire_callbacks :query_ready
 
       # If more than WulinExcel::MAXIMUM_NUMBER_OF_ROWS rows, cancel
-      if @query.count > WulinExcel.maximum_number_of_rows
+      # Strip any custom multi-column SELECT before counting; otherwise ActiveRecord
+      # wraps the whole select list inside COUNT(...) and produces invalid SQL when a
+      # grid adds aggregate columns (e.g. "... AS accreditations_count").
+      # Guard mirrors smart_query_count in wulin_master's actions.rb.
+      row_count = @query.respond_to?(:except) ? @query.except(:select).count : @query.count
+      if row_count > WulinExcel.maximum_number_of_rows
         message = "The excel file is too large."
         if defined?(APP_CONFIG) && APP_CONFIG['wulin_excel'] && APP_CONFIG['wulin_excel']['large_excel_warning']
           message += " " + APP_CONFIG['wulin_excel']['large_excel_warning']
