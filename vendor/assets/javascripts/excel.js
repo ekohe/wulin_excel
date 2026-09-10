@@ -1,3 +1,4 @@
+//= stub excel.esm
 (function($) {
   function Excel(gridName) {
     const grid = gridManager.getGrid(gridName);
