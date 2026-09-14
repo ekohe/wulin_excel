@@ -1,1 +1,1 @@
-import "./excel.js"
+import "../../vendor/assets/javascripts/excel.js"
