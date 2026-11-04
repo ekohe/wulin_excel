@@ -53,8 +53,9 @@ module WulinMaster
       # Strip any custom multi-column SELECT before counting; otherwise ActiveRecord
       # wraps the whole select list inside COUNT(...) and produces invalid SQL when a
       # grid adds aggregate columns (e.g. "... AS accreditations_count").
+      # Count DISTINCT id: a bare count on a view without primary key builds invalid SQL.
       # Guard mirrors smart_query_count in wulin_master's actions.rb.
-      row_count = @query.respond_to?(:except) ? @query.except(:select).count : @query.count
+      row_count = @query.respond_to?(:except) ? @query.except(:select).count("DISTINCT #{@query.table_name}.id") : @query.count
       if row_count > WulinExcel.maximum_number_of_rows
         message = "The excel file is too large."
         if defined?(APP_CONFIG) && APP_CONFIG['wulin_excel'] && APP_CONFIG['wulin_excel']['large_excel_warning']
@@ -70,7 +71,7 @@ module WulinMaster
       fire_callbacks :objects_ready
 
       # start to build xls file
-      filename = File.join(Rails.root, 'tmp', "export-#{ Time.now.strftime("%Y-%m-%d-at-%H-%M-%S") }.xlsx")
+      filename = File.join(Rails.root, 'tmp', "export-#{ Time.now.strftime("%Y-%m-%d-at-%H-%M-%S") }-#{ SecureRandom.hex(4) }.xlsx")
       workbook = WriteXLSX.new(filename)
       worksheet = workbook.add_worksheet
 

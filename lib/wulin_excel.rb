@@ -23,7 +23,7 @@ WulinMaster::Grid.add_default_action :export, icon: :file_download, global: true
 
 # Register xls/xlsx mime type
 Mime::Type.register "application/vnd.ms-excel", :xls
-Mime::Type.register "application/vnd.openxmlformats-offedocument.spreadsheetml.sheet", :xlsx
+Mime::Type.register "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", :xlsx
 
 # require 'writeexcel'
 require 'write_xlsx'

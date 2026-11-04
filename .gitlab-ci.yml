@@ -1,0 +1,27 @@
+image: ruby:4.0.9
+
+stages:
+  - test
+
+default:
+  before_script:
+    # wulin_master comes from git over ssh
+    - apt update -qy && apt install -qy openssh-client
+    - eval `ssh-agent -s`
+    - ssh-add /home/gitlab-runner/.ssh/id_rsa
+    - mkdir ~/.ssh && chmod 700 ~/.ssh
+    - ssh-keyscan -H gitlab.ekohe.com >> ~/.ssh/known_hosts
+    - gem install bundler -v 2.5.7
+    - bundle config path vendor/bundle
+    - bundle check || bundle install --jobs 8
+
+rspec:
+  stage: test
+  script:
+    - bundle exec rspec
+  cache:
+    key:
+      files:
+        - Gemfile.lock
+    paths:
+      - vendor/bundle
