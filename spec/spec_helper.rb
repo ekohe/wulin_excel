@@ -1,46 +1,47 @@
-require 'rubygems'
-require 'spork'
+ENV["RAILS_ENV"] = "test"
+ENV["DATABASE_URL"] = "sqlite3::memory:"
 
-Spork.prefork do
-  ENV["RAILS_ENV"] ||= 'test'
-  require 'rails/all'
-  require 'rspec/rails'
-  require 'writeexcel'
-  
-  RSpec.configure do |config|
-    config.mock_with :rspec
+require "bundler/setup"
+require "tmpdir"
+require "fileutils"
+require "rails/all"
+require "propshaft"
+require "dartsass-rails"
+require "haml-rails"
+require "wulin_master"
+require "wulin_excel"
+require "rspec/rails"
+require "roo"
+# wulin_master builds an OpenStruct for the unauthorized message without requiring it; apps get it from wulin_permits.
+require "ostruct"
+
+# Rails.root only provides the tmp directory that wulin_excel writes the xlsx files to.
+DUMMY_ROOT = Pathname.new(Dir.mktmpdir("wulin_excel_dummy"))
+FileUtils.mkdir_p(DUMMY_ROOT.join("tmp"))
+at_exit { FileUtils.rm_rf(DUMMY_ROOT) }
+
+module WulinExcelDummy
+  class Application < Rails::Application
+    config.root = DUMMY_ROOT
+    config.eager_load = false
+    config.secret_key_base = "wulin_excel_dummy"
+    config.logger = Logger.new(nil)
+    config.active_support.deprecation = :silence
+    config.action_dispatch.show_exceptions = :none
+    config.action_controller.allow_forgery_protection = false
+    config.hosts.clear
   end
-  
-  # create a dummy rails app
-  class TestApp < Rails::Application
-    config.root = File.dirname(__FILE__)
-  end
-  Rails.application = TestApp
-  
-  TestApp.routes.draw do
-    resources :countries
-    root :to => "homepage#index"
-  end
-  
-  module Rails
-    def self.root
-      @root ||= File.expand_path("../../tmp/rails", __FILE__)
-    end
-  end
-  
-  class ApplicationController < ActionController::Base
-  end 
 end
 
-Spork.each_run do
-  module WulinMaster
-    module Actions
-      def index
-        "original index action"
-      end
-    end
-  end
-  
-  Mime::Type.register "application/vnd.ms-excel", :xls
-  Mime::Type.register "application/vnd.openxmlformats-offedocument.spreadsheetml.sheet", :xlsx
+Rails.application.initialize!
+
+require_relative "support/dummy_app"
+require_relative "support/export_helpers"
+
+RSpec.configure do |config|
+  config.use_transactional_fixtures = true
+  config.infer_spec_type_from_file_location!
+  config.order = :random
+  config.expect_with(:rspec) { |c| c.syntax = :expect }
+  config.after { WulinExcel.maximum_number_of_rows = nil }
 end
