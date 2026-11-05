@@ -17,5 +17,8 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
+  s.required_ruby_version = ">= 3.4"
+
+  s.add_dependency "rails", ">= 8.1"
   s.add_dependency "write_xlsx"#, '~> 0.81.1'
 end
