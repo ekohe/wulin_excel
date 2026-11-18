@@ -11,17 +11,21 @@ default:
     - ssh-add /home/gitlab-runner/.ssh/id_rsa
     - mkdir ~/.ssh && chmod 700 ~/.ssh
     - ssh-keyscan -H gitlab.ekohe.com >> ~/.ssh/known_hosts
-    - gem install bundler -v 2.5.7
-    - bundle config path vendor/bundle
-    - bundle check || bundle install --jobs 8
-
-rspec:
-  stage: test
-  script:
-    - bundle exec rspec
+    - bundle config set --local path vendor/bundle
+    - bundle install --jobs 8
   cache:
     key:
       files:
         - Gemfile.lock
     paths:
       - vendor/bundle
+
+build:
+  stage: test
+  script:
+    - gem build wulin_excel.gemspec
+
+rspec:
+  stage: test
+  script:
+    - bundle exec rspec
